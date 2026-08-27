@@ -1,0 +1,34 @@
+name: Deploy My Site
+
+# Робот будет запускаться при каждом изменении в ветке main
+on:
+  push:
+    branches: [ main ]
+
+# Разрешаем роботу публиковать страницы на GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачиваем наш код
+        uses: actions/checkout@v4
+
+      - name: Настраиваем GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Загружаем файлы сайта
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Берем файлы из корня репозитория (наш index.html)
+
+      - name: Публикуем сайт в интернет
+        id: deployment
+        uses: actions/deploy-pages@v4
